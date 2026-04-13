@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershou.ershou.mapper.StoreUserFootmarkMapper">
+
+    <select id="getStoreUserFootmarkList" parameterType="com.ershou.ershou.domain.query.StoreUserCollectPageQuery" resultType="com.ershou.ershou.domain.dto.StoreUserFootmarkDto">
+        select suf.*,
+               su.username,
+               sg.good_name,
+               sg.image,
+               sg.good_info,
+               sg.price
+        from store_user_footmark suf
+                 join
+             store_user su
+             on
+                 suf.user_id = su.user_id
+                 join
+             store_good sg
+             on
+                 suf.good_id = sg.good_id
+        where (#{storeUserCollectQuery.username} is null or
+               su.username like concat('%', #{storeUserCollectQuery.username}, '%'))
+          and (#{storeUserCollectQuery.goodName} is null or
+               sg.good_name like concat('%', #{storeUserCollectQuery.goodName}, '%'))
+          and (#{storeUserCollectQuery.startprice} is null or
+               sg.price &gt;= #{storeUserCollectQuery.startprice})
+          and (#{storeUserCollectQuery.endprice} is null or
+               sg.price &lt;= #{storeUserCollectQuery.endprice})
+          and (#{storeUserCollectQuery.starttime} is null or
+               suf.create_time &gt;= #{storeUserCollectQuery.starttime})
+          and (#{storeUserCollectQuery.endtime} is null or
+               suf.create_time &lt;= #{storeUserCollectQuery.endtime})
+    </select>
+</mapper>

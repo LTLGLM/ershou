@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershou.ershou.mapper.StoreGoodMapper">
+
+    <select id="getStoreGoodList" parameterType="com.ershou.ershou.domain.query.StoreGoodPageQuery" resultType="com.ershou.ershou.domain.dto.StoreGoodDto">
+        select
+        sg.*, su.username, sc.cate_name
+        from
+        store_good sg
+        left join
+        store_user su
+        on
+        sg.user_id = su.user_id
+        left join
+        store_cate sc
+        on
+        sg.cate_id = sc.cate_id
+        where
+            sg.is_del = 0 and
+            1=1
+        <if test="storeGoodQuery.secondCateId != null">
+            AND sg.cate_id = #{storeGoodQuery.secondCateId}
+        </if>
+        <if test="storeGoodQuery.selectCateId != null and storeGoodQuery.secondCateId == null">
+            AND sg.cate_id in
+            <foreach collection="storeGoodQuery.selectCateId" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="storeGoodQuery.goodName != null and storeGoodQuery.goodName != ''">
+            AND sg.good_name = #{storeGoodQuery.goodName}
+        </if>
+        <if test="storeGoodQuery.username != null and storeGoodQuery.username != ''">
+            AND su.username = #{storeGoodQuery.username}
+        </if>
+
+    </select>
+
+
+</mapper>
+

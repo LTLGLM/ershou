@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershou.ershou.mapper.AdminMapper">
+
+    <resultMap id="roleResultMap" type="com.ershou.ershou.domain.dto.AdminDto">
+        <id property="adminId" column="admin_id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="lastLoginIp" column="last_login_ip"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="avatar" column="avatar"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleted" column="deleted"/>
+        <collection property="roles" ofType="com.ershou.ershou.domain.po.Role" select="com.ershou.ershou.mapper.RoleMapper.getRoles" column="admin_id">
+            <id property="roleId" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getAdminList" parameterType="com.ershou.ershou.domain.query.AdminPageQuery" resultMap="roleResultMap">
+        SELECT sa.*
+        FROM sys_admin sa
+                 left join
+             sys_admin_role sar ON sa.admin_id = sar.admin_id
+                 left join
+             sys_role sr ON sar.role_id = sr.role_id
+        WHERE sa.deleted != 1
+        AND (sr.role_status = 0 OR sr.role_status IS NULL)
+        AND (#{adminQuery.starttime} IS NULL
+           OR sa.create_time &gt;= #{adminQuery.starttime})
+          AND (#{adminQuery.endtime} IS NULL
+           OR sa.create_time &lt;= #{adminQuery.endtime})
+          AND (#{adminQuery.username} IS NULL
+           OR sa.username LIKE CONCAT('%'
+            , #{adminQuery.username}
+            , '%'))
+          AND (#{adminQuery.roles} IS NULL
+           OR sr.role_name LIKE CONCAT('%'
+            , #{adminQuery.roles}
+            , '%'))
+        group by sa.admin_id
+        order by sa.admin_id asc
+    </select>
+</mapper>

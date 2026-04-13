@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershou.ershou.mapper.StoreAddressMapper">
+
+    <select id="getStoreAddressList" parameterType="com.ershou.ershou.domain.query.StoreAddressPageQuery" resultType="com.ershou.ershou.domain.dto.StoreAddressDto">
+        select
+            sa.*,su.username,sf.floor_name
+        from
+            store_address sa
+                left join
+            store_user su
+            on
+                sa.user_id = su.user_id
+                left join
+            store_floor sf
+            on
+                sa.floor_id = sf.floor_id
+        where
+            sa.deleted = 0
+        and
+            sf.deleted = 0
+        and
+            su.deleted = 0
+        and
+            (#{storeAddressQuery.name} is null or sa.name like concat('%',#{storeAddressQuery.name},'%'))
+        and
+            (#{storeAddressQuery.tel} is null or sa.tel like concat('%',#{storeAddressQuery.tel},'%'))
+        and
+            (#{storeAddressQuery.username} is null or su.username like concat('%',#{storeAddressQuery.username},'%'))
+        and
+            (#{storeAddressQuery.floorName} is null or sf.floor_name like concat('%',#{storeAddressQuery.floorName},'%'))
+        and
+            (#{storeAddressQuery.starttime} is null or sa.create_time &gt;= #{storeAddressQuery.starttime})
+        and
+            (#{storeAddressQuery.endtime} is null or sa.create_time &lt;= #{storeAddressQuery.endtime})
+    </select>
+</mapper>

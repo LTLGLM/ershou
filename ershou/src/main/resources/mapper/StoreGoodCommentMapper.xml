@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ershou.ershou.mapper.StoreGoodCommentMapper">
+
+    <select id="getCommentList" resultType="com.ershou.ershou.domain.dto.StoreGoodCommentDto">
+        SELECT
+            c.*,
+            g.good_name,
+            g.image,
+            u.nickname
+        FROM
+            store_good_comment c
+        LEFT JOIN
+            store_good g ON c.good_id = g.good_id
+        LEFT JOIN
+            store_user u ON c.user_id = u.user_id
+        WHERE
+            c.is_show = 1
+        <if test="query.goodName != null and query.goodName != ''">
+            AND g.good_name LIKE CONCAT('%', #{query.goodName}, '%')
+        </if>
+        <if test="query.nickname != null and query.nickname != ''">
+            AND u.nickname LIKE CONCAT('%', #{query.nickname}, '%')
+        </if>
+        <if test="query.isReplied != null">
+            <if test="query.isReplied == true">
+                AND c.reply_content IS NOT NULL AND c.reply_content != ''
+            </if>
+            <if test="query.isReplied == false">
+                AND (c.reply_content IS NULL OR c.reply_content = '')
+            </if>
+        </if>
+        ORDER BY c.create_time DESC
+    </select>
+
+</mapper>

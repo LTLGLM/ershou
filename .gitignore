@@ -1,0 +1,30 @@
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.history/
+.trae/
+
+# Java / Maven build outputs
+**/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+out/
+build/
+*.class
+*.jar
+*.war
+
+# Logs and runtime files
+*.log
+logs/
+
+# Local environment and sensitive project config
+ershou/src/main/resources/application.yml
+ershou/src/main/resources/application-druid.yml

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ershou.ershou.mapper.StoreCateMapper">
+
+    <resultMap id="sizeValueResultMap" type="com.ershou.ershou.domain.po.StoreSizevalue" >
+        <id property="sizevalueId" column="sizevalue_id"/>
+        <result property="sizeId" column="sizeId"/>
+        <result property="sizeValue" column="size_value"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <resultMap id="cateSizeResultMap" type="com.ershou.ershou.domain.dto.StoreCateSizeDto" >
+        <id property="sizeId" column="size_id"/>
+        <result property="cateId" column="cate_id"/>
+        <result property="sizeName" column="size_name"/>
+        <result property="delFlag" column="del_flag"/>
+        <collection property="storeSizeValueList" ofType="com.ershou.ershou.domain.po.StoreSizevalue" resultMap="sizeValueResultMap"/>
+    </resultMap>
+
+    <resultMap id="cateResultMap" type="com.ershou.ershou.domain.dto.StoreCateDto">
+        <id property="cateId" column="cate_id" />
+        <result property="catePid" column="cate_pid" />
+        <result property="cateName" column="cate_name" />
+        <result property="cateImage" column="cate_image" />
+        <result property="cateStatus" column="cate_status" />
+        <result property="cateOrder" column="cate_order" />
+        <result property="createTime" column="create_time" />
+        <result property="delFlag" column="del_flag" />
+        <collection property="storeCateSizeDtoList" ofType="com.ershou.ershou.domain.dto.StoreCateSizeDto" resultMap="cateSizeResultMap" />
+    </resultMap>
+
+    <select id="getStoreCateByid" resultMap="cateResultMap" parameterType="java.lang.Integer">
+        select
+            sc.*,scs.*,ssv.*
+        from
+            store_cate sc
+                left join
+            store_catesize scs
+            on
+                sc.cate_id = scs.cate_id
+                left join
+            store_sizevalue ssv
+            on
+                scs.size_id = ssv.size_id
+        where
+            sc.cate_id = #{storeCateId}
+    </select>
+</mapper>
